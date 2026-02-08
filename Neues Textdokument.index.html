@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>Jinster Privat</title>
+
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<style>
+body {
+  margin:0;
+  background:#000;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial;
+}
+#cover {
+  width:80vw;
+  max-width:320px;
+  border-radius:22px;
+  box-shadow:0 0 25px rgba(255,255,255,.2);
+}
+button {
+  margin-top:30px;
+  padding:18px 42px;
+  font-size:22px;
+  border-radius:40px;
+  border:none;
+}
+#player {
+  width:1px;
+  height:1px;
+  opacity:0;
+}
+</style>
+</head>
+
+<body>
+
+<img id="cover" src="img/back.png">
+<button id="play">▶ Abspielen</button>
+<div id="player"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+let player;
+let songId = null;
+
+fetch("songs.json")
+.then(r => r.json())
+.then(list => {
+  const song = list.find(s => s.id == id);
+  if(song) songId = song.yt;
+});
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '1',
+    width: '1',
+    playerVars: {
+      controls:0,
+      modestbranding:1,
+      rel:0,
+      playsinline:1
+    }
+  });
+}
+
+document.getElementById("play").addEventListener("click", function(){
+  if(player && songId){
+    player.loadVideoById(songId);
+  } else {
+    alert("Song nicht gefunden 😅");
+  }
+});
+</script>
+
+</body>
+</html>
